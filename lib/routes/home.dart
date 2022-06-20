@@ -10,11 +10,13 @@ import 'package:youtube_pip/settings.dart';
 import 'package:youtube_pip/webServer.dart';
 
 String? getVideoCodeFromUrl(String url) {
+  // final regex = RegExp(
+  // r'^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$');
   final regex = RegExp(
-      r'^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$');
+      r'^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*');
   RegExpMatch? match = regex.firstMatch(url);
   if (match != null) {
-    return match.group(6);
+    return match.group(7);
   }
   return null;
 }
@@ -36,6 +38,7 @@ class HomePage extends HookWidget {
         onBack: () {
           controller.goBack();
         },
+        color: Colors.grey[160],
         content: BrowserView(
             controller: controller,
             onUrlChanged: (String url) async {
