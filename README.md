@@ -16,7 +16,7 @@ There are some problems with youtube embed into a WebView.
 
 The first is that you cannot **login into Google Account**. To fix that I had to change user-agent header of WebView requests. I finally got a working user-agent (I got it doing alchemy whit user-agent strings).
 
-Sencond, youtube have some **content protection** that prohibits you from playing embed videos on a non auhotized domains or directly in the browser (ex: https://youtube.com/emebd/dQw4w9WgXcQ). Music videos and others could not be played. Luckily, if you use a `<iframe/>` on a `localhost` domain it works (I'm not sure why). So I use a local webserver to host a very simple page with an iframe with a localhost domain.
+Sencond, youtube have some **content protection** that prohibits you from playing embed videos on a non auhotized domains or directly in the browser (ex: https://youtube.com/embed/dQw4w9WgXcQ). Music videos and others could not be played. Luckily, if you use a `<iframe/>` on a `localhost` domain it works (I'm not sure why). So I use a local webserver to host a very simple page with an iframe with a localhost domain.
 
 Third, **autoplay**. Nowadays browsers have disabled autoplay if you don't interact with content first. 
 That breaks this app when using a local web server (previous problem). 
