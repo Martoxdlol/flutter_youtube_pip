@@ -57,8 +57,9 @@ class _ExampleBrowser extends State<BrowserView> {
       await controller.setBackgroundColor(Colors.transparent);
       await controller.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);
 
-      await controller.setUserAgent(
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.115 Safari/537.36");
+      // Fake user agent to enable google signin
+      await controller
+          .setUserAgent('Mozilla/5.0 Chrome/99.0.4859.164 Safari/537.36');
 
       // final url = getServerUrl('VC5NaNsR7-8');
       await controller.loadUrl("https://www.youtube.com/");
@@ -105,9 +106,7 @@ class _ExampleBrowser extends State<BrowserView> {
       return const Text(
         'Initializing...',
         style: TextStyle(
-          fontSize: 24.0,
-          fontWeight: FontWeight.w900,
-        ),
+            fontSize: 24.0, fontWeight: FontWeight.w900, color: Colors.white),
       );
     } else {
       return Webview(
