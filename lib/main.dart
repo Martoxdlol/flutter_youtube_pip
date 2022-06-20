@@ -17,7 +17,7 @@ void main() async {
   await Window.initialize();
 
   WindowOptions windowOptions = const WindowOptions(
-    size: Size(360, 680),
+    size: initialSize,
     center: true,
     backgroundColor: Colors.transparent,
     skipTaskbar: false,
@@ -39,15 +39,16 @@ void main() async {
         ..alignment = Alignment.center
         ..show();
     });
-
-    initWebServer();
   }
+
+  initWebServer();
 
   appSettings = await SettingsData.read();
 
   final settings = appSettings;
 
   if (settings.alwaysOnTop) await windowManager.setAlwaysOnTop(true);
+  await windowManager.setOpacity(settings.opacity / 100);
 
   await Window.setEffect(effect: WindowEffect.aero);
   await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
