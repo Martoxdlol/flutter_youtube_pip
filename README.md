@@ -1,16 +1,24 @@
 # youtube_pip
 
-A new Flutter project.
+This is Picture in Picture player for youtube videos.
 
-## Getting Started
+It's made with flutter and WebView2.
 
-This project is a starting point for a Flutter application.
+## Performance
 
-A few resources to get you started if this is your first Flutter project:
+Previous version of this app was made with Electron and the performance whas horrible. 
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+So I tried making native Windows app but it's to complicaded. I could have but it didn't seem like the best idea. Because of that, I keep trying different things and i found Flutter as the best candidate. It outperforms Electron startup time and it has a more native feeling.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Interesting tricks
+
+There are some problems with youtube embed into a WebView.
+
+The first is that you cannot **login into Google Account**. To fix that I had to change user-agent header of WebView requests. I finally got a working user-agent (I got it doing alchemy whit user-agent strings).
+
+Sencond, youtube have some **content protection** that prohibits you from playing embed videos on a non auhotized domains or directly in the browser (ex: https://youtube.com/emebd/dQw4w9WgXcQ). Music videos and others could not be played. Luckily, if you use a `<iframe/>` on a `localhost` domain it works (I'm not sure why). So I use a local webserver to host a very simple page with an iframe with a localhost domain.
+
+Third, **autoplay**. Nowadays browsers have disabled autoplay if you don't interact with content first. 
+That breaks this app when using a local web server (previous problem). 
+Doing some expermients I found that if some JavaScript code that played some sound was injected into the webview, the autoplay limitation was bypassed. So I injected a JS code similar to `new AudioContext(); ...` (see webServer.dart) that turned on autoplay feature.
+
