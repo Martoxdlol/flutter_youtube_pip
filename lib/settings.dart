@@ -4,10 +4,12 @@ class SettingsData {
   bool alwaysOnTop;
   bool autoResize;
   bool autoResumeBrowser;
+  int opacity;
   SettingsData({
     required this.alwaysOnTop,
     required this.autoResize,
     required this.autoResumeBrowser,
+    required this.opacity,
   });
 
   static Future<SettingsData> read() async {
@@ -17,6 +19,7 @@ class SettingsData {
       alwaysOnTop: prefs.getBool('allwaysOnTop') ?? true,
       autoResize: prefs.getBool('autoResize') ?? true,
       autoResumeBrowser: prefs.getBool('autoResumeBrowser') ?? true,
+      opacity: prefs.getInt('opacity') ?? 100,
     );
   }
 
@@ -26,6 +29,7 @@ class SettingsData {
     prefs.setBool('allwaysOnTop', alwaysOnTop);
     prefs.setBool('autoResize', autoResize);
     prefs.setBool('autoResumeBrowser', autoResumeBrowser);
+    prefs.setInt('opacity', opacity);
   }
 }
 

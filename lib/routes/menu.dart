@@ -25,9 +25,10 @@ class Menu extends HookWidget {
     final clibBoardUrl = useState<String?>(null);
     final video = useState<YoutubeVideoInfo?>(null);
 
-    final alwaysOnTop = useState(true);
-    final autoResize = useState(true);
-    final autoResumeBrowser = useState(true);
+    final alwaysOnTop = useState(appSettings.alwaysOnTop);
+    final autoResize = useState(appSettings.autoResize);
+    final autoResumeBrowser = useState(appSettings.autoResumeBrowser);
+    final opacity = useState(appSettings.opacity.toDouble());
 
     final pastedUrl = useState("");
 
@@ -43,10 +44,6 @@ class Menu extends HookWidget {
       if (appSettings.autoResumeBrowser) {
         webViewController.suspend();
       }
-
-      alwaysOnTop.value = appSettings.alwaysOnTop;
-      autoResize.value = appSettings.autoResize;
-      autoResumeBrowser.value = appSettings.autoResumeBrowser;
 
       final timer = Timer.periodic(const Duration(seconds: 1), (timer) {
         FlutterClipboard.paste().then((value) {
@@ -68,12 +65,15 @@ class Menu extends HookWidget {
       appSettings.alwaysOnTop = alwaysOnTop.value;
       appSettings.autoResize = autoResize.value;
       appSettings.autoResumeBrowser = autoResumeBrowser.value;
+      appSettings.opacity = opacity.value.toInt();
       windowManager.setAlwaysOnTop(appSettings.alwaysOnTop);
+      windowManager.setOpacity(opacity.value / 100);
       appSettings.save();
     }, [
       alwaysOnTop.value,
       autoResize.value,
       autoResumeBrowser.value,
+      opacity.value
     ]);
 
     final matechedUrlCode = getVideoCodeFromUrl(pastedUrl.value);
@@ -100,6 +100,7 @@ class Menu extends HookWidget {
     }
 
     return TitleBarSwitchableScaffold(
+        color: Color(0x66333333),
         showBack: true,
         onBack: () async {
           navigator.pop();
@@ -159,6 +160,33 @@ class Menu extends HookWidget {
                 },
               ),
             ),
+            const Subtitle(title: 'Opacity'),
+            ConfigField(
+                child: Slider(
+              onChanged: (value) => opacity.value = value,
+              max: 100,
+              value: opacity.value,
+              label: 'Opacity',
+              min: 10,
+            )),
+            const Subtitle(title: 'Experimental'),
+            const ConfigField(
+                child: Text(
+              "Warning: you must close app and reopen to re gain control. ",
+              style: TextStyle(color: Colors.white),
+            )),
+            ConfigField(
+                child: Button(
+              style: ButtonStyle(
+                  backgroundColor: ButtonState.all(Colors.grey[160])),
+              onPressed: (() {
+                windowManager.setIgnoreMouseEvents(true);
+              }),
+              child: const Text(
+                "Click through window",
+                style: TextStyle(color: Colors.white),
+              ),
+            ))
           ],
         ));
   }
