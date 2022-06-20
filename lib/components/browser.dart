@@ -1,3 +1,4 @@
+import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -102,11 +103,17 @@ class _ExampleBrowser extends State<BrowserView> {
   }
 
   Widget compositeView() {
+    final double width = MediaQuery.of(context).size.width;
+    final double height = MediaQuery.of(context).size.height;
     if (!controller.value.isInitialized) {
-      return const Text(
-        'Initializing...',
-        style: TextStyle(
-            fontSize: 24.0, fontWeight: FontWeight.w900, color: Colors.white),
+      return SizedBox(
+        width: width,
+        height: height - appWindow.titleBarHeight,
+        child: const Text(
+          'Initializing...',
+          style: TextStyle(
+              fontSize: 24.0, fontWeight: FontWeight.w900, color: Colors.white),
+        ),
       );
     } else {
       return Webview(
