@@ -11,6 +11,7 @@ import 'package:youtube_pip/constants.dart';
 import 'package:youtube_pip/routes/home.dart';
 import 'package:http/http.dart' as http;
 import 'package:youtube_pip/settings.dart';
+import 'package:youtube_pip/webServer.dart';
 
 class Menu extends HookWidget {
   WebviewController webViewController;
@@ -94,7 +95,8 @@ class Menu extends HookWidget {
     void playVideo() async {
       if (videoUrl == null) return;
       navigator.pop();
-      webViewController.loadUrl(videoUrl);
+      await webViewController
+          .loadUrl(getServerUrl(getVideoCodeFromUrl(videoUrl) ?? ''));
     }
 
     return TitleBarSwitchableScaffold(

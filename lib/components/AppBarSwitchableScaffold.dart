@@ -51,18 +51,21 @@ class TitleBarSwitchableScaffold extends HookWidget {
   final bool? autoHideTitleBar;
   final bool? showBack;
   final Function? onBack;
+  final Color? color;
   const TitleBarSwitchableScaffold(
       {super.key,
       required this.content,
       this.onBack,
       this.floatingActionButton,
       this.autoHideTitleBar,
-      this.showBack});
+      this.showBack,
+      this.color});
 
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
       Container(
+        color: color ?? Colors.transparent,
         padding: EdgeInsets.only(
             top: (autoHideTitleBar == true) ? 0 : appWindow.titleBarHeight),
         child: content,
