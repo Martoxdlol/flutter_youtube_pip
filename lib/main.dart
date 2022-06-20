@@ -49,7 +49,7 @@ void main() async {
 
   if (settings.alwaysOnTop) await windowManager.setAlwaysOnTop(true);
 
-  if (settings.alwaysOnTop) await Window.setEffect(effect: WindowEffect.aero);
+  await Window.setEffect(effect: WindowEffect.aero);
   await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
 }
 
