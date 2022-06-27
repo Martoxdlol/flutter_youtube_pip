@@ -100,7 +100,7 @@ class Menu extends HookWidget {
     }
 
     return TitleBarSwitchableScaffold(
-        color: Color(0x66333333),
+        color: Color(0x99333333),
         showBack: true,
         onBack: () async {
           navigator.pop();
@@ -113,18 +113,20 @@ class Menu extends HookWidget {
           children: [
             const Title(title: 'Paste video URL'),
             TextField(placheholder: placeholder),
-            ConfigField(
-                child: Button(
-              style: ButtonStyle(
-                  backgroundColor: ButtonState.all(Colors.grey[160])),
-              onPressed: (() {
-                playVideo();
-              }),
-              child: const Text(
-                "Play video",
-                style: TextStyle(color: Colors.white),
-              ),
-            )),
+            videoUrl != null
+                ? ConfigField(
+                    child: Button(
+                    style: ButtonStyle(
+                        backgroundColor: ButtonState.all(Colors.grey[160])),
+                    onPressed: (() {
+                      playVideo();
+                    }),
+                    child: const Text(
+                      "Play video",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ))
+                : Container(),
             video.value != null
                 ? ConfigField(
                     child: VideoCard(
@@ -169,24 +171,12 @@ class Menu extends HookWidget {
               label: 'Opacity',
               min: 10,
             )),
-            const Subtitle(title: 'Experimental'),
+            const Subtitle(title: 'Click through'),
             const ConfigField(
                 child: Text(
-              "Warning: you must close app and reopen to re gain control. ",
+              "Interact with content behind window. Use titlebar button.",
               style: TextStyle(color: Colors.white),
             )),
-            ConfigField(
-                child: Button(
-              style: ButtonStyle(
-                  backgroundColor: ButtonState.all(Colors.grey[160])),
-              onPressed: (() {
-                windowManager.setIgnoreMouseEvents(true);
-              }),
-              child: const Text(
-                "Click through window",
-                style: TextStyle(color: Colors.white),
-              ),
-            ))
           ],
         ));
   }

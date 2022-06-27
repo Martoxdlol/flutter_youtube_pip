@@ -1,12 +1,17 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:window_manager/window_manager.dart';
+import 'package:youtube_pip/clickThrought.dart';
 import 'package:youtube_pip/components/TitleBarUtil.dart';
+import 'package:youtube_pip/settings.dart';
 
 class TitleBar extends StatelessWidget {
   final Function? onBack;
+  final Function? onIgnoreMouseEvents;
   final bool? showBack;
-  const TitleBar({super.key, this.showBack, this.onBack});
+  const TitleBar(
+      {super.key, this.showBack, this.onBack, this.onIgnoreMouseEvents});
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +42,9 @@ class TitleBar extends StatelessWidget {
                   )
                 : Container()),
             Expanded(child: MoveWindow()),
+            ClickThroughButton(
+              onPressed: onIgnoreMouseEvents,
+            ),
             const WindowButtons()
           ],
         ),
@@ -63,6 +71,16 @@ class TitleBarSwitchableScaffold extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ignoringMouseEvents = useState(false);
+
+    useEffect(() {
+      windowManager
+          .setIgnoreMouseEvents(ignoringMouseEvents.value)
+          .then((value) {
+        windowManager.setOpacity(appSettings.opacity / 100);
+      });
+    }, [ignoringMouseEvents.value]);
+
     return Stack(children: [
       Container(
         color: color ?? Colors.transparent,
@@ -77,8 +95,20 @@ class TitleBarSwitchableScaffold extends HookWidget {
       ),
       ShowOnHover(
         showAlways: !(autoHideTitleBar == true),
-        child: TitleBar(showBack: showBack, onBack: onBack),
-      )
+        child: TitleBar(
+            showBack: showBack,
+            onBack: onBack,
+            onIgnoreMouseEvents: () {
+              ignoringMouseEvents.value = true;
+            }),
+      ),
+      ignoringMouseEvents.value
+          ? Positioned(
+              bottom: 0,
+              child: BottomBarMouseHoverHold(onAction: () {
+                ignoringMouseEvents.value = false;
+              }))
+          : Container(),
     ]);
   }
 }
