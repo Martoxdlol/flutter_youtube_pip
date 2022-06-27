@@ -41,7 +41,10 @@ class TitleBar extends StatelessWidget {
                     ),
                   )
                 : Container()),
-            Expanded(child: MoveWindow()),
+            Expanded(
+                child: DragToMoveArea(
+              child: Container(),
+            )),
             ClickThroughButton(
               onPressed: onIgnoreMouseEvents,
             ),

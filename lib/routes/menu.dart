@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:clipboard/clipboard.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:webview_windows/webview_windows.dart';
 import 'package:window_manager/window_manager.dart';
@@ -39,6 +40,7 @@ class Menu extends HookWidget {
           prevSize = size;
           windowManager.setSize(initialSize);
         }
+        await Window.setEffect(effect: WindowEffect.aero);
       }();
 
       if (appSettings.autoResumeBrowser) {
@@ -55,9 +57,8 @@ class Menu extends HookWidget {
 
       return () {
         timer.cancel();
-        if (appSettings.autoResumeBrowser) {
-          webViewController.resume();
-        }
+        Window.setEffect(effect: WindowEffect.disabled);
+        webViewController.resume();
       };
     }, []);
 

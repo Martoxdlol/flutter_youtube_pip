@@ -1,6 +1,6 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:youtube_pip/webServer.dart';
 import 'package:webview_windows/webview_windows.dart';
@@ -66,7 +66,7 @@ class _ExampleBrowser extends State<BrowserView> {
       await controller.loadUrl("https://www.youtube.com/");
 
       if (kDebugMode) {
-        await controller.openDevTools();
+        // await controller.openDevTools();
       }
 
       controller.loadingState.listen((event) {
@@ -79,7 +79,7 @@ class _ExampleBrowser extends State<BrowserView> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialog(
             context: context,
-            builder: (_) => AlertDialog(
+            builder: (_) => ContentDialog(
                   title: Text('Error'),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -90,7 +90,7 @@ class _ExampleBrowser extends State<BrowserView> {
                     ],
                   ),
                   actions: [
-                    TextButton(
+                    Button(
                       child: Text('Continue'),
                       onPressed: () {
                         Navigator.of(context).pop();
@@ -109,10 +109,8 @@ class _ExampleBrowser extends State<BrowserView> {
       return SizedBox(
         width: width,
         height: height - appWindow.titleBarHeight,
-        child: const Text(
-          'Initializing...',
-          style: TextStyle(
-              fontSize: 24.0, fontWeight: FontWeight.w900, color: Colors.white),
+        child: Center(
+          child: ProgressRing(backgroundColor: Colors.grey[200]),
         ),
       );
     } else {
@@ -135,16 +133,16 @@ class _ExampleBrowser extends State<BrowserView> {
       String url, WebviewPermissionKind kind, bool isUserInitiated) async {
     final decision = await showDialog<WebviewPermissionDecision>(
       context: navigatorKey.currentContext!,
-      builder: (BuildContext context) => AlertDialog(
+      builder: (BuildContext context) => ContentDialog(
         title: const Text('WebView permission requested'),
         content: Text('WebView has requested permission \'$kind\''),
         actions: <Widget>[
-          TextButton(
+          Button(
             onPressed: () =>
                 Navigator.pop(context, WebviewPermissionDecision.deny),
             child: const Text('Deny'),
           ),
-          TextButton(
+          Button(
             onPressed: () =>
                 Navigator.pop(context, WebviewPermissionDecision.allow),
             child: const Text('Allow'),

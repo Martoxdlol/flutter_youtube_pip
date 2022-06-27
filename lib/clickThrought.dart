@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:screen_retriever/screen_retriever.dart';
 import 'package:window_manager/window_manager.dart';
@@ -49,7 +48,7 @@ class BottomBarMouseHoverHold extends HookWidget {
       color: Colors.blue,
       width: width,
       height: widgetHeight,
-      child: Center(
+      child: const Center(
           child: Text(
         "Hover and hold mouse here",
         style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
