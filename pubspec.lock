@@ -351,7 +351,7 @@ packages:
     source: hosted
     version: "4.0.0"
   screen_retriever:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: screen_retriever
       url: "https://pub.dartlang.org"
