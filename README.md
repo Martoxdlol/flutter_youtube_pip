@@ -22,3 +22,21 @@ Third, **autoplay**. Nowadays browsers have disabled autoplay if you don't inter
 That breaks this app when using a local web server (previous problem). 
 Doing some expermients I found that if some JavaScript code that played some sound was injected into the webview, the autoplay limitation was bypassed. So I injected a JS code similar to `new AudioContext(); ...` (see webServer.dart) that turned on autoplay feature.
 
+
+## How to compile
+
+Build binaries
+
+```bash
+flutter pub run msix:build
+```
+
+Pack msix
+
+```bash
+flutter pub run msix:pack
+```
+
+Set `store: true` on `pubspec.yml` to publish on store. Set to `false` to test locally. 
+It's necessary to rebuild and repack to when changed. 
+
