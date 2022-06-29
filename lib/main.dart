@@ -46,7 +46,11 @@ void main() async {
 
   runApp(const MyApp());
 
-  initWebServer();
+  initWebServer().then((value) {
+    initWebServerStatusCheker();
+  }).catchError((onError) {
+    print("FATAL, Cannot start web server");
+  });
 
   appSettings = await SettingsData.read();
 
@@ -57,6 +61,8 @@ void main() async {
 
   await Window.setEffect(effect: WindowEffect.disabled);
   await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
+
+  initWebServerStatusCheker();
 }
 
 class MyApp extends HookWidget {

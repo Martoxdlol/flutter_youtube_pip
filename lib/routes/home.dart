@@ -31,6 +31,7 @@ class HomePage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final playingVideo = useState(false);
+    final playingCode = useState("");
 
     return TitleBarSwitchableScaffold(
         autoHideTitleBar: playingVideo.value,
@@ -43,12 +44,15 @@ class HomePage extends HookWidget {
             controller: controller,
             onUrlChanged: (String url) async {
               final code = getVideoCodeFromUrl(url);
-              if (code != null) {
+              if (code != null && code != playingCode.value) {
+                playingCode.value = code;
                 await controller.goBack();
-                await controller.loadUrl(getServerUrl(code));
+                final playVideoUrl = getServerUrl(code);
+                print("Playing video, using url: $playVideoUrl");
+                await controller.loadUrl(playVideoUrl);
               }
 
-              if (url.startsWith('http://localhost')) {
+              if (urlIsVideoPlayer(url)) {
                 playingVideo.value = true;
                 prevSize = await windowManager.getSize();
 

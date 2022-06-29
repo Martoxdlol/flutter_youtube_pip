@@ -1,9 +1,14 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 
+import 'package:http/http.dart' as http;
+
 int port = 32452;
+
+bool isServerWorking = false;
 
 Future<void> initWebServer() async {
   var handler =
@@ -27,7 +32,39 @@ Future<void> initWebServer() async {
   print('Serving at http://${server.address.host}:${server.port}');
 }
 
+bool chekingServer = false;
+void initWebServerStatusCheker() {
+  updateServerStatus();
+  if (chekingServer) return;
+  chekingServer = true;
+  Timer.periodic(Duration(seconds: 5), (timer) {
+    updateServerStatus();
+  });
+}
+
+void updateServerStatus() async {
+  try {
+    final response = await http.get(Uri.parse('http://localhost:$port/'));
+    if (response.statusCode == 200) {
+      isServerWorking = true;
+    } else {
+      isServerWorking = false;
+    }
+  } catch (e) {
+    print("ERROR, web server is not working");
+    isServerWorking = false;
+  }
+}
+
+bool urlIsVideoPlayer(String url) {
+  return url.startsWith('http://localhost') ||
+      url.startsWith('https://www.youtube.com/embed/');
+}
+
 String getServerUrl(String code) {
+  if (!isServerWorking) {
+    return 'https://www.youtube.com/embed/$code';
+  }
   return 'http://localhost:$port/$code';
 }
 
