@@ -63,7 +63,12 @@ class DraggableAppBar extends HookWidget implements PreferredSizeWidget {
               AppBarButton(
                 height: height,
                 width: 50,
-                child: Text("menu"),
+                child: Icon(Icons.menu),
+              ),
+              AppBarButton(
+                height: height,
+                width: 50,
+                child: Icon(Icons.mouse_outlined),
               ),
             ]),
           )
