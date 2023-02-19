@@ -24,7 +24,6 @@ class BottomBarMouseHoverHold extends HookWidget {
         final windowPosition = await windowManager.getPosition();
         final topLeft = Offset(windowPosition.dx, windowPosition.dy + height - widgetHeight);
         final bottomRight = Offset(windowPosition.dx + width, windowPosition.dy + height);
-
         if (pointInsideOffsets(point, topLeft, bottomRight)) {
           insideCounter.value++;
           if (insideCounter.value > 2) {
@@ -46,10 +45,11 @@ class BottomBarMouseHoverHold extends HookWidget {
       width: width,
       height: widgetHeight,
       child: const Center(
-          child: Text(
-        "Hover and hold mouse here",
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-      )),
+        child: Text(
+          "Hover and hold mouse here",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+        ),
+      ),
     );
   }
 }

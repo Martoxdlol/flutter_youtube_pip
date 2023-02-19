@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_youtube_pip/draggable_app_bar.dart';
 
@@ -10,6 +9,7 @@ class AppScaffold extends HookWidget {
   final bool? showBack;
   final void Function()? onBack;
   final Color? color;
+  final List<Widget> actions;
 
   const AppScaffold({
     super.key,
@@ -19,6 +19,7 @@ class AppScaffold extends HookWidget {
     this.autoHideTitleBar = false,
     this.showBack,
     this.color,
+    this.actions = const [],
   });
 
   @override
@@ -30,9 +31,11 @@ class AppScaffold extends HookWidget {
       compact: true,
       autoHide: autoHideTitleBar,
       onBack: onBack,
+      actions: actions,
     );
 
     return Scaffold(
+      backgroundColor: color,
       body: Stack(children: [
         Positioned(
           top: !autoHideTitleBar ? DraggableAppBar.compactHeight : 0,

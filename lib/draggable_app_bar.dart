@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart' as fluent_ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_youtube_pip/routes/menu.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -11,12 +12,14 @@ class DraggableAppBar extends HookWidget implements PreferredSizeWidget {
   final bool compact;
   final bool autoHide;
   final void Function()? onBack;
+  final List<Widget> actions;
 
   const DraggableAppBar({
     super.key,
     required this.title,
     required this.brightness,
     required this.backgroundColor,
+    this.actions = const [],
     this.compact = false,
     this.autoHide = false,
     this.onBack,
@@ -60,16 +63,7 @@ class DraggableAppBar extends HookWidget implements PreferredSizeWidget {
                   size: 13,
                 ),
               ),
-              AppBarButton(
-                height: height,
-                width: 50,
-                child: Icon(Icons.menu),
-              ),
-              AppBarButton(
-                height: height,
-                width: 50,
-                child: Icon(Icons.mouse_outlined),
-              ),
+              ...actions,
             ]),
           )
         ],
