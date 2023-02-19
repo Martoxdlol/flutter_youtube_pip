@@ -1,6 +1,6 @@
 {
-    "name": "youtube_pip",
-    "short_name": "youtube_pip",
+    "name": "flutter_youtube_pip",
+    "short_name": "flutter_youtube_pip",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

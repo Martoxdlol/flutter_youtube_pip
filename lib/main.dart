@@ -1,68 +1,48 @@
-import 'dart:async';
-import 'dart:io';
-
-import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:window_manager/window_manager.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:youtube_pip/constants.dart';
-import 'package:youtube_pip/routes/home.dart';
-import 'package:flutter_acrylic/flutter_acrylic.dart';
-import 'package:youtube_pip/settings.dart';
-import 'package:youtube_pip/webServer.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_youtube_pip/constants.dart';
+import 'package:flutter_youtube_pip/routes/home.dart';
+import 'package:flutter_youtube_pip/settings.dart';
+import 'package:flutter_youtube_pip/web_server.dart';
+import 'package:window_manager/window_manager.dart';
 
 void main() async {
+  print("App start...");
   WidgetsFlutterBinding.ensureInitialized();
+  print("Flutter bindings initialized");
   // Must add this line.
   await windowManager.ensureInitialized();
-  await Window.initialize();
+  print("Window manager initialized");
 
-  // WindowOptions windowOptions = const WindowOptions(
-  //     size: initialSize,
-  //     center: true,
-  //     backgroundColor: Colors.transparent,
-  //     skipTaskbar: false,
-  //     titleBarStyle: TitleBarStyle.hidden,
-  //     title: 'Youtube Picture in Picture player',
-  //     minimumSize: const Size(256, 144));
+  WindowOptions windowOptions = const WindowOptions(
+    size: initialSize,
+    minimumSize: minSize,
+    center: true,
+    backgroundColor: Colors.transparent,
+    skipTaskbar: false,
+    titleBarStyle: TitleBarStyle.hidden,
+  );
 
-  // windowManager.waitUntilReadyToShow(windowOptions, () async {
-  //   // await windowManager.setAsFrameless();
-  //   await windowManager.setHasShadow(true);
-  //   // await windowManager.setResizable(true);
-  //   // await windowManager.show();
-  //   // await windowManager.focus();
-  // });
+  windowManager.waitUntilReadyToShow(windowOptions, () async {
+    await windowManager.show();
+    await windowManager.focus();
+  });
 
-  if (Platform.isWindows) {
-    doWhenWindowReady(() async {
-      appWindow
-        ..minSize = const Size(256, 144)
-        ..size = initialSize
-        ..alignment = Alignment.center
-        ..show();
-    });
-  }
-
+  print("Window manager configured");
   runApp(const MyApp());
+  print("App started");
 
   initWebServer().then((value) {
+    print("Web server initialized on port $port");
     initWebServerStatusCheker();
   }).catchError((onError) {
-    print("FATAL, Cannot start web server");
+    print("Cannot start web server");
   });
 
   appSettings = await SettingsData.read();
 
-  final settings = appSettings;
-
-  if (settings.alwaysOnTop) await windowManager.setAlwaysOnTop(true);
-  await windowManager.setOpacity(settings.opacity / 100);
-
-  await Window.setEffect(effect: WindowEffect.disabled);
-  await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
-
-  initWebServerStatusCheker();
+  if (appSettings.alwaysOnTop) await windowManager.setAlwaysOnTop(true);
+  await windowManager.setOpacity(appSettings.opacity / 100);
 }
 
 class MyApp extends HookWidget {
@@ -73,7 +53,7 @@ class MyApp extends HookWidget {
     return FluentApp(
       color: Colors.transparent,
       title: 'Youtube PiP',
-      theme: ThemeData(),
+      theme: FluentThemeData.dark(),
       home: const Routes(),
     );
   }

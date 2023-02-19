@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_youtube_pip/draggable_app_bar.dart';
 import 'package:screen_retriever/screen_retriever.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -19,14 +19,11 @@ class BottomBarMouseHoverHold extends HookWidget {
     final insideCounter = useState<int>(0);
 
     useEffect(() {
-      final timer =
-          Timer.periodic(const Duration(milliseconds: 500), (timer) async {
+      final timer = Timer.periodic(const Duration(milliseconds: 500), (timer) async {
         final point = await screenRetriever.getCursorScreenPoint();
         final windowPosition = await windowManager.getPosition();
-        final topLeft = Offset(
-            windowPosition.dx, windowPosition.dy + height - widgetHeight);
-        final bottomRight =
-            Offset(windowPosition.dx + width, windowPosition.dy + height);
+        final topLeft = Offset(windowPosition.dx, windowPosition.dy + height - widgetHeight);
+        final bottomRight = Offset(windowPosition.dx + width, windowPosition.dy + height);
 
         if (pointInsideOffsets(point, topLeft, bottomRight)) {
           insideCounter.value++;
@@ -58,10 +55,7 @@ class BottomBarMouseHoverHold extends HookWidget {
 }
 
 bool pointInsideOffsets(Offset point, Offset topLeft, Offset bottomRight) {
-  if (point.dx > topLeft.dx &&
-      point.dx < bottomRight.dx &&
-      point.dy > topLeft.dy &&
-      point.dy < bottomRight.dy) {
+  if (point.dx > topLeft.dx && point.dx < bottomRight.dx && point.dy > topLeft.dy && point.dy < bottomRight.dy) {
     return true;
   }
   return false;
@@ -89,7 +83,7 @@ class ClickThroughButton extends HookWidget {
             if (onPressed != null) onPressed!();
           }),
           child: Container(
-            height: appWindow.titleBarHeight,
+            height: DraggableAppBar.compactHeight,
             decoration: BoxDecoration(
               color: hover ? const Color(0x11FFFFFF) : Colors.transparent,
             ),
@@ -97,8 +91,7 @@ class ClickThroughButton extends HookWidget {
             child: const Center(
                 child: Text(
               "Click through",
-              style: TextStyle(
-                  color: Color(0xAAFFFFFF), fontWeight: FontWeight.w500),
+              style: TextStyle(color: Color(0xAAFFFFFF), fontWeight: FontWeight.w500),
             )),
           ),
         ));
