@@ -3,16 +3,16 @@ import 'dart:convert';
 
 import 'package:clipboard/clipboard.dart';
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter_acrylic/flutter_acrylic.dart';
+import 'package:flutter/material.dart' as material;
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_youtube_pip/components/app_scaffold.dart';
+import 'package:flutter_youtube_pip/settings.dart';
 import 'package:webview_windows/webview_windows.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:youtube_pip/components/AppBarSwitchableScaffold.dart';
-import 'package:youtube_pip/constants.dart';
-import 'package:youtube_pip/routes/home.dart';
+import 'package:flutter_youtube_pip/constants.dart';
+import 'package:flutter_youtube_pip/routes/home.dart';
 import 'package:http/http.dart' as http;
-import 'package:youtube_pip/settings.dart';
-import 'package:youtube_pip/webServer.dart';
+import 'package:flutter_youtube_pip/web_server.dart';
 
 class Menu extends HookWidget {
   WebviewController webViewController;
@@ -40,7 +40,6 @@ class Menu extends HookWidget {
           prevSize = size;
           windowManager.setSize(initialSize);
         }
-        await Window.setEffect(effect: WindowEffect.aero);
       }();
 
       if (appSettings.autoResumeBrowser) {
@@ -57,7 +56,6 @@ class Menu extends HookWidget {
 
       return () {
         timer.cancel();
-        Window.setEffect(effect: WindowEffect.disabled);
         webViewController.resume();
       };
     }, []);
@@ -70,16 +68,10 @@ class Menu extends HookWidget {
       windowManager.setAlwaysOnTop(appSettings.alwaysOnTop);
       windowManager.setOpacity(opacity.value / 100);
       appSettings.save();
-    }, [
-      alwaysOnTop.value,
-      autoResize.value,
-      autoResumeBrowser.value,
-      opacity.value
-    ]);
+    }, [alwaysOnTop.value, autoResize.value, autoResumeBrowser.value, opacity.value]);
 
     final matechedUrlCode = getVideoCodeFromUrl(pastedUrl.value);
-    final String? videoUrl =
-        matechedUrlCode != null ? pastedUrl.value : clibBoardUrl.value;
+    final String? videoUrl = matechedUrlCode != null ? pastedUrl.value : clibBoardUrl.value;
 
     final String placeholder = clibBoardUrl.value ?? "YouTube video URL";
 
@@ -96,12 +88,11 @@ class Menu extends HookWidget {
     void playVideo() async {
       if (videoUrl == null) return;
       navigator.pop();
-      await webViewController
-          .loadUrl(getServerUrl(getVideoCodeFromUrl(videoUrl) ?? ''));
+      await webViewController.loadUrl(getServerUrl(getVideoCodeFromUrl(videoUrl) ?? ''));
     }
 
-    return TitleBarSwitchableScaffold(
-        color: Color(0x99333333),
+    return AppScaffold(
+        color: const Color.fromARGB(195, 51, 51, 51),
         showBack: true,
         onBack: () async {
           navigator.pop();
@@ -117,8 +108,7 @@ class Menu extends HookWidget {
             videoUrl != null
                 ? ConfigField(
                     child: Button(
-                    style: ButtonStyle(
-                        backgroundColor: ButtonState.all(Colors.grey[160])),
+                    style: ButtonStyle(backgroundColor: ButtonState.all(Colors.grey[160])),
                     onPressed: (() {
                       playVideo();
                     }),
@@ -172,12 +162,34 @@ class Menu extends HookWidget {
               label: 'Opacity',
               min: 10,
             )),
-            const Subtitle(title: 'Click through'),
-            const ConfigField(
-                child: Text(
-              "Interact with content behind window. Use titlebar button.",
-              style: TextStyle(color: Colors.white),
-            )),
+            const Subtitle(title: 'Pro tip'),
+            ConfigField(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: Text(
+                      "Click content behind the window",
+                      style: TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                  ),
+                  Row(
+                    children: const [
+                      Text(
+                        "Change the window opacity, choose a video and click ",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      Icon(material.Icons.mouse_outlined),
+                      Text(
+                        " on the title bar",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
           ],
         ));
   }
@@ -196,8 +208,7 @@ class Title extends StatelessWidget {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(
           title,
-          style: TextStyle(
-              fontSize: (size != null) ? size : 30, color: Colors.white),
+          style: TextStyle(fontSize: (size != null) ? size : 30, color: Colors.white),
         )
       ]),
     );
@@ -227,22 +238,17 @@ class VideoCard extends StatelessWidget {
                 height: 80,
               ),
               Container(
-                padding: EdgeInsets.all(8),
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        video.title,
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 17,
-                            overflow: TextOverflow.ellipsis),
-                      ),
-                      Text(
-                        video.author,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ]),
+                padding: const EdgeInsets.all(8),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(
+                    video.title,
+                    style: const TextStyle(color: Colors.white, fontSize: 17, overflow: TextOverflow.ellipsis),
+                  ),
+                  Text(
+                    video.author,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ]),
               )
             ],
           ),
@@ -271,7 +277,7 @@ class ConfigField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(left: 20, top: 5, bottom: 5, right: 20),
+      padding: const EdgeInsets.only(left: 20, top: 5, bottom: 5, right: 20),
       child: child,
     );
   }
@@ -291,7 +297,7 @@ class TextField extends StatelessWidget {
       placeholder: placheholder,
       cursorColor: Colors.white,
       onChanged: onChanged,
-      placeholderStyle: TextStyle(color: Color.fromARGB(100, 255, 255, 255)),
+      placeholderStyle: const TextStyle(color: Color.fromARGB(100, 255, 255, 255)),
     ));
   }
 }
@@ -300,28 +306,25 @@ class ToggleField extends StatelessWidget {
   final String label;
   final void Function(bool value)? onChange;
   final bool value;
-  const ToggleField(
-      {super.key, required this.label, this.onChange, required this.value});
+  const ToggleField({super.key, required this.label, this.onChange, required this.value});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         ToggleSwitch(
-          style: ToggleSwitchThemeData(
-              uncheckedDecoration: ButtonState.all(BoxDecoration(
-                  borderRadius: BorderRadius.circular(99),
-                  border: Border.all(color: Colors.white, width: 1)))),
-          thumb: Container(
-            width: 13,
-            height: 13,
-            margin: const EdgeInsets.all(3),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(99), color: Colors.white),
-          ),
+          // style: ToggleSwitchThemeData(
+          //     uncheckedDecoration: ButtonState.all(
+          //         BoxDecoration(borderRadius: BorderRadius.circular(99), border: Border.all(color: Colors.white, width: 1)))),
+          // thumb: Container(
+          //   width: 13,
+          //   height: 13,
+          //   margin: const EdgeInsets.all(3),
+          //   decoration: BoxDecoration(borderRadius: BorderRadius.circular(99), color: Colors.white),
+          // ),
           checked: value,
           onChanged: onChange,
-          content: Text(label, style: TextStyle(color: Colors.white)),
+          content: Text(label, style: const TextStyle(color: Colors.white)),
         )
       ],
     );
@@ -336,17 +339,13 @@ class YoutubeVideoInfo {
   final String videoUrl;
 
   const YoutubeVideoInfo(
-      {required this.title,
-      required this.author,
-      required this.description,
-      required this.thumbnailUrl,
-      required this.videoUrl});
+      {required this.title, required this.author, required this.description, required this.thumbnailUrl, required this.videoUrl});
 }
 
 Future<YoutubeVideoInfo?> fetchVideoInfo(String code) async {
   try {
-    final response = await http.get(Uri.parse(
-        'https://noembed.com/embed?url=${Uri.encodeComponent('https://www.youtube.com/watch?v=${Uri.encodeComponent(code)}')}'));
+    final response = await http.get(
+        Uri.parse('https://noembed.com/embed?url=${Uri.encodeComponent('https://www.youtube.com/watch?v=${Uri.encodeComponent(code)}')}'));
     final rawVideoData = jsonDecode(response.body);
     final data = YoutubeVideoInfo(
       author: rawVideoData["author_name"],
@@ -360,14 +359,3 @@ Future<YoutubeVideoInfo?> fetchVideoInfo(String code) async {
     return null;
   }
 }
-
-// async function fetchVideoInfo(code) {
-//     const r = await fetch('https://noembed.com/embed?url=' + encodeURIComponent('https://www.youtube.com/watch?v=' + encodeURIComponent(code)), {
-//         method: 'GET',
-//         headers: {
-//             'Accept': 'application/json',
-//             'Content-Type': 'application/json'
-//         },
-//     })
-//     return await r.json()
-// }

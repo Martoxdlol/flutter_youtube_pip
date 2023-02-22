@@ -1,8 +1,8 @@
-import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:youtube_pip/webServer.dart';
+import 'package:flutter_youtube_pip/draggable_app_bar.dart';
+import 'package:flutter_youtube_pip/web_server.dart';
 import 'package:webview_windows/webview_windows.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -10,12 +10,10 @@ final navigatorKey = GlobalKey<NavigatorState>();
 class BrowserView extends StatefulWidget {
   final WebviewController controller;
   final Function onUrlChanged;
-  const BrowserView(
-      {super.key, required this.onUrlChanged, required this.controller});
+  const BrowserView({super.key, required this.onUrlChanged, required this.controller});
 
   @override
-  State<BrowserView> createState() =>
-      _ExampleBrowser(onUrlChanged: onUrlChanged, controller: controller);
+  State<BrowserView> createState() => _ExampleBrowser(onUrlChanged: onUrlChanged, controller: controller);
 }
 
 class _ExampleBrowser extends State<BrowserView> {
@@ -59,8 +57,7 @@ class _ExampleBrowser extends State<BrowserView> {
       await controller.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);
 
       // Fake user agent to enable google signin
-      await controller
-          .setUserAgent('Mozilla/5.0 Chrome/99.0.4859.164 Safari/537.36');
+      await controller.setUserAgent('Mozilla/5.0 Chrome/99.0.4859.164 Safari/537.36');
 
       // final url = getServerUrl('VC5NaNsR7-8');
       await controller.loadUrl("https://www.youtube.com/");
@@ -78,26 +75,27 @@ class _ExampleBrowser extends State<BrowserView> {
     } on PlatformException catch (e) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialog(
-            context: context,
-            builder: (_) => ContentDialog(
-                  title: Text('Error'),
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Code: ${e.code}'),
-                      Text('Message: ${e.message}'),
-                    ],
-                  ),
-                  actions: [
-                    Button(
-                      child: Text('Continue'),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    )
-                  ],
-                ));
+          context: context,
+          builder: (_) => ContentDialog(
+            title: Text('Error'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Code: ${e.code}'),
+                Text('Message: ${e.message}'),
+              ],
+            ),
+            actions: [
+              Button(
+                child: Text('Continue'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          ),
+        );
       });
     }
   }
@@ -108,7 +106,7 @@ class _ExampleBrowser extends State<BrowserView> {
     if (!controller.value.isInitialized) {
       return SizedBox(
         width: width,
-        height: height - appWindow.titleBarHeight,
+        height: height - DraggableAppBar.compactHeight,
         child: Center(
           child: ProgressRing(backgroundColor: Colors.grey[200]),
         ),
@@ -117,6 +115,8 @@ class _ExampleBrowser extends State<BrowserView> {
       return Webview(
         controller,
         permissionRequested: _onPermissionRequested,
+        height: height,
+        width: width,
       );
     }
   }
@@ -129,8 +129,7 @@ class _ExampleBrowser extends State<BrowserView> {
     );
   }
 
-  Future<WebviewPermissionDecision> _onPermissionRequested(
-      String url, WebviewPermissionKind kind, bool isUserInitiated) async {
+  Future<WebviewPermissionDecision> _onPermissionRequested(String url, WebviewPermissionKind kind, bool isUserInitiated) async {
     final decision = await showDialog<WebviewPermissionDecision>(
       context: navigatorKey.currentContext!,
       builder: (BuildContext context) => ContentDialog(
@@ -138,13 +137,11 @@ class _ExampleBrowser extends State<BrowserView> {
         content: Text('WebView has requested permission \'$kind\''),
         actions: <Widget>[
           Button(
-            onPressed: () =>
-                Navigator.pop(context, WebviewPermissionDecision.deny),
+            onPressed: () => Navigator.pop(context, WebviewPermissionDecision.deny),
             child: const Text('Deny'),
           ),
           Button(
-            onPressed: () =>
-                Navigator.pop(context, WebviewPermissionDecision.allow),
+            onPressed: () => Navigator.pop(context, WebviewPermissionDecision.allow),
             child: const Text('Allow'),
           ),
         ],
